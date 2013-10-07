@@ -1,19 +1,3 @@
-# profile folder
-$profileFolder = split-path $profile
-
-# save last 100 history items on exit; with the 'exit' command
-$historyPath = Join-Path $profileFolder "ps_history.xml"
-
-# hook powershell's exiting event and hide the registration with -supportevent.
-Register-EngineEvent -SourceIdentifier powershell.exiting -SupportEvent -Action {
-  Get-History -Count 100 | Export-Clixml (Join-Path $profileFolder "ps_history.xml") }
-
-# load previous history, if it exists
-if((Test-Path $historyPath)) {
-  Import-Clixml $historyPath | ? { $count++; $true } | Add-History
-  Write-Host -Fore Green "Loaded $count history item(s).`n"
-}
-
 # add paths
 Set-Content Env:Path "$Env:Path;C:\Users\jelle\Dropbox\InfoProjects\Workspace\powershell\scripts\"
 
@@ -25,6 +9,7 @@ Set-Alias build "C:\Users\jelle\Dropbox\InfoProjects\Workspace\powershell\script
 Set-Alias buildngo "C:\Users\jelle\Dropbox\InfoProjects\Workspace\powershell\scripts\Invoke-BuildDevelop.ps1"
 Set-Alias sudo "C:\Users\jelle\Dropbox\InfoProjects\Workspace\powershell\scripts\Sudo.ps1"
 Set-Alias fsi "C:\Program Files (x86)\FSharp-2.0.0.0\bin\fsi.exe"
+Set-Alias which "Get-Command"
 
 # a simple prompt for powershell
 Function prompt {
