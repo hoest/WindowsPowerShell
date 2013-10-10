@@ -1,24 +1,37 @@
+# Load posh-git module from current directory
+Import-Module C:\development\utils\posh-git\posh-git.psm1
+
 # add paths
-Set-Content Env:Path "$Env:Path;C:\Users\jelle\Dropbox\InfoProjects\Workspace\powershell\scripts\"
+Set-Content Env:Path "$Env:Path;$(gc 'env:ProgramFiles(x86)')\git\bin;C:\development\intern\powershell\scripts\"
 
 # some aliasses
-Set-Alias vim "C:\Program Files (x86)\Vim\vim73\gvim.exe"
-Set-Alias gvim "C:\Program Files (x86)\Vim\vim73\gvim.exe"
+Set-Alias vim "C:\Program Files (x86)\Vim\vim74\gvim.exe"
+Set-Alias gvim "C:\Program Files (x86)\Vim\vim74\gvim.exe"
 Set-Alias subl "C:\Program Files\Sublime Text 2\sublime_text.exe"
-Set-Alias build "C:\Users\jelle\Dropbox\InfoProjects\Workspace\powershell\scripts\Invoke-Build.ps1"
-Set-Alias buildngo "C:\Users\jelle\Dropbox\InfoProjects\Workspace\powershell\scripts\Invoke-BuildDevelop.ps1"
-Set-Alias sudo "C:\Users\jelle\Dropbox\InfoProjects\Workspace\powershell\scripts\Sudo.ps1"
-Set-Alias fsi "C:\Program Files (x86)\FSharp-2.0.0.0\bin\fsi.exe"
+Set-Alias build "C:\development\intern\powershell\scripts\Invoke-Build.ps1"
+Set-Alias buildngo "C:\development\intern\powershell\scripts\Invoke-BuildDevelop.ps1"
+Set-Alias iprox "C:\development\intern\powershell\scripts\Invoke-StartServer.ps1"
+Set-Alias sudo "C:\development\intern\powershell\scripts\Sudo.ps1"
+Set-Alias fsi "c:\Program Files (x86)\Microsoft SDKs\F#\3.0\Framework\v4.0\fsi.exe"
 Set-Alias which "Get-Command"
 
-# a simple prompt for powershell
+# a simple prompt for powershell (with use of Posh-Git)
 Function prompt {
-  $host.UI.RawUI.WindowTitle = Get-Location; "$ "
+  $realLASTEXITCODE = $LASTEXITCODE
+  $host.UI.RawUI.WindowTitle = Get-Location
+
+  Write-Host (get-location).Drive.Name.ToLowerInvariant() -NoNewLine
+  Write-Host ":" -NoNewLine
+  Write-Host (gi $pwd).Name -NoNewLine
+  Write-VcsStatus
+
+  $global:LASTEXITCODE = $realLASTEXITCODE
+  " $ "
 }
 
 # with this command, your editor ('gvim') will start with this file
 Function profile {
-  gvim $profile
+  subl $profile
 }
 
 # with this command, your editor ('gvim') will start with the hostsfile
@@ -31,3 +44,8 @@ Function hostsfile {
 Function version {
   $host.version
 }
+
+# posh-git
+Enable-GitColors
+Pop-Location
+Start-SshAgent -Quiet
